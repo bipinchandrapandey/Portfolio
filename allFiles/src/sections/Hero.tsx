@@ -120,7 +120,7 @@ export default function Hero() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <a href="/Bipin_Chandra_Pandey_Resume_Final.pdf" target="_blank" rel="noopener noreferrer">
+              <a href="/Bipin_Chandra_Pandey_Resume_Final.pdf" download="Bipin_Chandra_Pandey_Resume.pdf" target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="outline"
                   className="border-purple-500/40 dark:border-white/20 bg-white/5 dark:bg-white/5 hover:bg-purple-500/10 dark:hover:bg-white/10 text-white dark:text-white px-8 py-6 rounded-full font-medium text-base backdrop-blur-sm group"
