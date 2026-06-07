@@ -39,14 +39,13 @@ const projects = [
 export default function Projects() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
-  const { ref: parallaxRef, y: parallaxY } = useParallax(-0.18);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { y: parallaxY } = useParallax(-0.18, sectionRef);
 
   return (
     <section
       id="projects"
-      ref={(el) => {
-        (parallaxRef as React.MutableRefObject<HTMLElement | null>).current = el;
-      }}
+      ref={sectionRef as React.LegacyRef<HTMLElement>}
       className="relative py-20 bg-[#080d1a] dark:bg-black overflow-hidden"
     >
       {/* Background effects — parallax layer */}

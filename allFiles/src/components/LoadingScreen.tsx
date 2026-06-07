@@ -50,7 +50,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           transition={{ duration: 0.6 }}
           className="text-3xl md:text-4xl font-bold text-white mb-2"
         >
-          Code With <span className="gradient-text">Siddhant</span>
+          Code With <span className="gradient-text">Bipin Chandra Pandey</span>
         </motion.h1>
 
         {/* Loading text */}

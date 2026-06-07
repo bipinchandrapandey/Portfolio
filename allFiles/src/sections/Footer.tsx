@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
 import { useParallax } from '@/hooks/useParallax';
 import { ArrowUp, Instagram, Twitter } from 'lucide-react';
 
@@ -15,7 +16,8 @@ const socialLinks = [
 ];
 
 export default function Footer() {
-  const { ref: parallaxRef, y: parallaxY } = useParallax(-0.1);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { y: parallaxY } = useParallax(-0.1, sectionRef);
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -29,7 +31,7 @@ export default function Footer() {
 
   return (
     <footer
-      ref={(el) => { (parallaxRef as React.MutableRefObject<HTMLElement | null>).current = el; }}
+      ref={sectionRef as React.LegacyRef<HTMLElement>}
       className="relative bg-[#080d1a] dark:bg-black border-t border-purple-500/20 dark:border-white/5 overflow-hidden"
     >
       {/* Background effects — parallax layer */}
@@ -110,10 +112,19 @@ export default function Footer() {
               <li className="text-gray-500 dark:text-gray-400">
                 <span className="text-gray-400 dark:text-gray-500">Email:</span>{' '}
                 <a
-                  href="mailto:siddhantk74919@gmail.com"
+                  href="mailto:official.bipinchandra@gmail.com"
                   className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
-                  siddhantk74919@gmail.com
+                  official.bipinchandra@gmail.com
+                </a>
+              </li>
+              <li className="text-gray-500 dark:text-gray-400">
+                <span className="text-gray-400 dark:text-gray-500">Phone:</span>{' '}
+                <a
+                  href="tel:+919565025178"
+                  className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                >
+                  +91 9565025178
                 </a>
               </li>
               <li className="text-gray-500 dark:text-gray-400">
@@ -132,7 +143,7 @@ export default function Footer() {
           className="mt-12 pt-8 border-t border-purple-100 dark:border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <p className="text-gray-500 dark:text-gray-500 text-sm">
-            © 2025 Siddhant kumar. All rights reserved.
+            © 2025 Bipin Chandra Pandey. All rights reserved.
           </p>
 
           {/* Back to Top */}

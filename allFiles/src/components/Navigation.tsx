@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { Menu, X } from 'lucide-react';
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -16,7 +15,6 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,60 +103,11 @@ export default function Navigation() {
                 </motion.a>
               ))}
 
-              {/* Theme Toggle */}
-              <motion.button
-                onClick={toggleTheme}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="relative w-10 h-10 rounded-full flex items-center justify-center bg-purple-100 dark:bg-white/10 text-purple-600 dark:text-yellow-300 hover:bg-purple-200 dark:hover:bg-white/20 transition-colors"
-                aria-label="Toggle theme"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {isDark ? (
-                    <motion.div
-                      key="sun"
-                      initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Sun className="w-5 h-5" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="moon"
-                      initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Moon className="w-5 h-5" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
+
             </div>
 
-            {/* Mobile: Theme toggle + hamburger */}
+            {/* Mobile: Hamburger */}
             <div className="md:hidden flex items-center gap-2">
-              <motion.button
-                onClick={toggleTheme}
-                whileTap={{ scale: 0.9 }}
-                className="p-2 rounded-full bg-purple-100 dark:bg-white/10 text-purple-600 dark:text-yellow-300 transition-colors"
-                aria-label="Toggle theme"
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {isDark ? (
-                    <motion.div key="sun-m" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      <Sun size={20} />
-                    </motion.div>
-                  ) : (
-                    <motion.div key="moon-m" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      <Moon size={20} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
 
               <motion.button
                 className="p-2 text-indigo-900 dark:text-white"

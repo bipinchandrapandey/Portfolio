@@ -5,11 +5,15 @@ import { useRef } from 'react';
  * Returns a spring-smoothed parallax `y` MotionValue for a section element.
  * @param speed  How fast the parallax moves relative to scroll. Negative = moves up as you scroll down.
  */
-export function useParallax(speed: number = -0.2): {
+export function useParallax(
+  speed: number = -0.2,
+  externalRef?: React.RefObject<HTMLElement | null>
+): {
   ref: React.RefObject<HTMLElement | null>;
   y: MotionValue<number>;
 } {
-  const ref = useRef<HTMLElement>(null);
+  const internalRef = useRef<HTMLElement>(null);
+  const ref = externalRef || internalRef;
 
   const { scrollYProgress } = useScroll({
     target: ref,

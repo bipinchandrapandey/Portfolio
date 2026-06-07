@@ -1,198 +1,169 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot } from 'lucide-react';
-
-interface Message {
-  id: number;
-  text: string;
-  isUser: boolean;
-}
+import { MessageSquare, X, Send, Mic, MicOff } from 'lucide-react';
+import { generateChatResponse } from '../lib/ai-service';
 
 export default function AIChat() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Hi! I'm AI assistant. How can I help you today?",
-      isUser: false,
-    },
-  ]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [messages, setMessages] = useState<any[]>([
+        { role: 'assistant', parts: [{ text: 'Hi! I am Bipin\'s AI assistant. How can I help you today?' }] }
+    ]);
+    const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isListening, setIsListening] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const recognitionRef = useRef<any>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now(),
-      text: inputValue,
-      isUser: true,
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "Thanks for reaching out! I'd be happy to help you with your project.",
-        "That's an interesting question! Let me think about it...",
-        "I can definitely assist you with that. What specific details would you like to discuss?",
-        "Great to hear from you! Feel free to share more about what you're looking for.",
-        "I'd love to collaborate on that! Let's discuss the details further.",
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    useEffect(() => {
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-      const aiMessage: Message = {
-        id: Date.now() + 1,
-        text: randomResponse,
-        isUser: false,
-      };
+            recognition.onresult = (event: any) => {
+                const transcript = Array.from(event.results)
+                    .map((result: any) => result[0])
+                    .map((result) => result.transcript)
+                    .join('');
+                setInput(transcript);
+            };
 
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
+            recognitionRef.current = recognition;
+        }
+    }, []);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
+    const toggleListening = () => {
+        if (isListening) {
+            recognitionRef.current?.stop();
+        } else {
+            setInput('');
+            recognitionRef.current?.start();
+        }
+        setIsListening(!isListening);
+    };
 
-  return (
-    <>
-      {/* Chat Button */}
-      <motion.button
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 2, duration: 0.3 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-glow-lg transition-all ${
-          isOpen ? 'hidden' : 'flex'
-        } items-center justify-center`}
-      >
-        <MessageCircle className="w-6 h-6" />
-      </motion.button>
+    const handleSend = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (!input.trim() || isLoading) return;
 
-      {/* Chat Window */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-6 right-6 z-50 w-80 sm:w-96"
-          >
-            <div className="bg-gray-900/95 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold text-sm">AI Assistant</h4>
-                    <p className="text-gray-400 text-xs">Online</p>
-                  </div>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </motion.button>
-              </div>
+        const userMessage = { role: 'user', parts: [{ text: input }] };
+        setMessages((prev) => [...prev, userMessage]);
+        setInput('');
+        setIsLoading(true);
+        if (isListening) toggleListening();
 
-              {/* Messages */}
-              <div className="h-80 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm ${
-                        message.isUser
-                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-md'
-                          : 'bg-gray-800 text-gray-300 rounded-bl-md'
-                      }`}
+        try {
+            const response = await generateChatResponse(input, messages);
+            setMessages((prev) => [...prev, { role: 'model', parts: [{ text: response }] }]);
+        } catch (error) {
+            setMessages((prev) => [...prev, { role: 'model', parts: [{ text: 'Sorry, I hit a snag. Please try again!' }] }]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed bottom-6 right-6 z-50">
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="bg-white dark:bg-gray-900 border border-purple-500/20 rounded-2xl shadow-2xl w-[350px] sm:w-[400px] h-[500px] flex flex-col overflow-hidden mb-4 backdrop-blur-xl"
                     >
-                      {message.text}
-                    </div>
-                  </motion.div>
-                ))}
-                {isTyping && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex justify-start"
-                  >
-                    <div className="bg-gray-800 px-4 py-3 rounded-2xl rounded-bl-md">
-                      <div className="flex gap-1">
-                        {[0, 1, 2].map((i) => (
-                          <motion.div
-                            key={i}
-                            animate={{ y: [0, -5, 0] }}
-                            transition={{
-                              duration: 0.5,
-                              repeat: Infinity,
-                              delay: i * 0.1,
-                            }}
-                            className="w-2 h-2 bg-purple-400 rounded-full"
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+                        {/* Header */}
+                        <div className="p-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                    <MessageSquare size={18} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-sm">Portfolio Assistant</h3>
+                                    <p className="text-[10px] opacity-80">Powered by GPT-4o mini</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform">
+                                <X size={20} />
+                            </button>
+                        </div>
 
-              {/* Input */}
-              <div className="p-4 border-t border-white/5">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Type a message..."
-                    className="flex-1 bg-gray-800 border border-white/10 rounded-xl px-4 py-2 text-white text-sm placeholder:text-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
-                  />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleSend}
-                    disabled={!inputValue.trim()}
-                    className="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Send className="w-4 h-4" />
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+                        {/* Messages */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+                            {messages.map((msg, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm ${
+                                        msg.role === 'user' 
+                                            ? 'bg-purple-600 text-white' 
+                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
+                                    }`}>
+                                        {msg.parts[0].text}
+                                    </div>
+                                </motion.div>
+                            ))}
+                            {isLoading && (
+                                <div className="flex justify-start">
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl flex gap-1">
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce" />
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]" />
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.4s]" />
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Input */}
+                        <form onSubmit={handleSend} className="p-4 border-t border-gray-100 dark:border-gray-800 flex gap-2 items-center">
+                            <button
+                                type="button"
+                                onClick={toggleListening}
+                                className={`p-2 rounded-full transition-colors ${isListening ? 'bg-red-500 text-white animate-pulse' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500'}`}
+                            >
+                                {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                            </button>
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Type a message..."
+                                className="flex-1 bg-gray-100 dark:bg-gray-800 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none text-gray-800 dark:text-white"
+                            />
+                            <button
+                                type="submit"
+                                disabled={!input.trim() || isLoading}
+                                className="p-2 bg-purple-600 text-white rounded-full hover:scale-110 active:scale-95 transition-all disabled:opacity-50"
+                            >
+                                <Send size={18} />
+                            </button>
+                        </form>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-14 h-14 bg-gradient-to-tr from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-purple-500/40 transition-shadow"
+            >
+                {isOpen ? <X size={28} /> : <MessageSquare size={28} />}
+            </motion.button>
+        </div>
+    );
 }

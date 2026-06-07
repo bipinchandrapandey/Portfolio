@@ -1,3 +1,4 @@
+import emailjs from '@emailjs/browser';
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { Mail, Phone, MapPin, Send, Instagram, Twitter } from 'lucide-react';
@@ -10,14 +11,14 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'siddhantk74919@gmail.com',
-    href: 'mailto:siddhantk74919@gmail.com',
+    value: 'official.bipinchandra@gmail.com',
+    href: 'mailto:official.bipinchandra@gmail.com',
   },
   {
     icon: Phone,
     label: 'Phone',
-    value: '+91 9026329956',
-    href: 'tel:+919026329956',
+    value: '+91 9565025178',
+    href: 'tel:+919565025178',
   },
   {
     icon: MapPin,
@@ -35,7 +36,8 @@ const socialLinks = [
 export default function Contact() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-50px' });
-  const { ref: parallaxRef, y: parallaxY } = useParallax(-0.15);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { y: parallaxY } = useParallax(-0.15, sectionRef);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -46,16 +48,38 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setFormData({ name: '', email: '', message: '' });
-    alert('Message sent successfully!');
+
+    try {
+      // STEP: Yahan apni EmailJS keys dalein (emailjs.com se)
+      const SERVICE_ID = "service_gftxphi";    // Updated with your service ID
+      const TEMPLATE_ID = "template_do2nhmp";   // Updated with your template ID
+      const PUBLIC_KEY = "bmwfr9gy4javgit25";    // Updated with your key
+
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        to_name: "Bipin Chandra Pandey",
+        message: formData.message,
+      };
+
+      const res = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY);
+      
+      if (res.status === 200) {
+        alert('Message sent successfully! 🚀');
+        setFormData({ name: '', email: '', message: '' });
+      }
+    } catch (error: any) {
+      console.error('EmailJS Error:', error);
+      alert(`Error: ${error?.text || 'Failed to send message'}. Please ensure your EmailJS keys are correct.`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section
       id="contact"
-      ref={(el) => { (parallaxRef as React.MutableRefObject<HTMLElement | null>).current = el; }}
+      ref={sectionRef as React.LegacyRef<HTMLElement>}
       className="relative py-20 bg-[#080d1a] dark:bg-black overflow-hidden"
     >
       {/* Background effects — parallax layer */}
@@ -98,42 +122,60 @@ export default function Contact() {
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Name
                 </label>
-                <Input
-                  type="text"
-                  placeholder="Your name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="bg-purple-50/60 dark:bg-gray-900/50 border-purple-200 dark:border-white/10 text-indigo-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-12"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Your name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                    maxLength={50}
+                    className="bg-purple-50/60 dark:bg-gray-900/50 border-purple-200 dark:border-white/10 text-indigo-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-12"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono pointer-events-none">
+                    {formData.name.length}/50
+                  </div>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Email
                 </label>
-                <Input
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="bg-purple-50/60 dark:bg-gray-900/50 border-purple-200 dark:border-white/10 text-indigo-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-12"
-                />
+                <div className="relative">
+                  <Input
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required
+                    maxLength={100}
+                    className="bg-purple-50/60 dark:bg-gray-900/50 border-purple-200 dark:border-white/10 text-indigo-950 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl h-12"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-mono pointer-events-none">
+                    {formData.email.length}/100
+                  </div>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Message
                 </label>
-                <Textarea
-                  placeholder="Tell me about your project..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  required
-                  rows={5}
-                  className="bg-white/5 dark:bg-gray-900/50 border-purple-500/30 dark:border-white/10 text-white dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl resize-none"
-                />
+                <div className="relative">
+                  <Textarea
+                    placeholder="Tell me about your project..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    required
+                    maxLength={500}
+                    rows={5}
+                    className="bg-white/5 dark:bg-gray-900/50 border-purple-500/30 dark:border-white/10 text-white dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-600 focus:border-purple-500 focus:ring-purple-500/20 rounded-xl resize-none"
+                  />
+                  <div className="absolute bottom-3 right-3 text-[10px] text-gray-500 font-mono">
+                    {formData.message.length}/500
+                  </div>
+                </div>
               </div>
 
               <Button

@@ -1,27 +1,143 @@
-# dependencies
-/node_modules
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# production build
-/build
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# misc
-.DS_Store
+# Dependency directories
+node_modules/
+/jspm_packages/
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional microbundle cache
+.cache
+.parcel-cache
+
+# Optional next.js build output
+.next
+out
+
+# Optional Nuxt.js build output
+.nuxt
+dist
+
+# Optional Gatsby files
+.cache/
+# Comment out the next line if you want to check your bundle into your repository
+# public
+
+# Optional grunt cache
+.grunt
+
+# Optional node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (__snowpack__)
+web_modules/
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional microbundle cache
+.cache
+.parcel-cache
+
+# Optional next.js build output
+.next
+out
+
+# Optional Nuxt.js build output
+.nuxt
+dist
+
+# Optional Gatsby files
+.cache/
+# Comment out the next line if you want to check your bundle into your repository
+# public
+
+# Optional grunt cache
+.grunt
+
+# Optional node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Binaries for programs and libraries
+bin-debug/
+bin-release/
+
+# Default binary storage
+obj/
+[Ee]bin/
+
+# Environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# IDE
-.vscode/
+# IDEs and editors
+.vscode/*
+!.vscode/extensions.json
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# testing
-/coverage
+# OS related files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
 
-# cache
-.cache/
+# Production build
+dist/
+build/
+
+# Lint and scratch files
+lint-results*.json
+scratch/

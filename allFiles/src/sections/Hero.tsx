@@ -6,7 +6,7 @@ import { useParallax } from '@/hooks/useParallax';
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { ref: parallaxRef, y: parallaxY } = useParallax(-0.15);
+  const { y: parallaxY } = useParallax(-0.15, sectionRef);
 
   // Mouse-based 3D tilt for the avatar
   const mouseX = useMotionValue(0);
@@ -37,10 +37,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      ref={(el) => {
-        sectionRef.current = el;
-        (parallaxRef as React.MutableRefObject<HTMLElement | null>).current = el;
-      }}
+      ref={sectionRef as React.LegacyRef<HTMLElement>}
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#080d1a] dark:bg-black"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -91,7 +88,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
             >
-              <span className="gradient-text">siddhant kumar</span>
+              <span className="gradient-text">Bipin Chandra Pandey</span>
               <br />
               <span className="text-white">Full Stack </span>
               <span className="gradient-text">Developer</span>
@@ -123,7 +120,7 @@ export default function Hero() {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
 
-              <a href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+              <a href="/Bipin_Chandra_Pandey_Resume_Final.pdf" target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="outline"
                   className="border-purple-500/40 dark:border-white/20 bg-white/5 dark:bg-white/5 hover:bg-purple-500/10 dark:hover:bg-white/10 text-white dark:text-white px-8 py-6 rounded-full font-medium text-base backdrop-blur-sm group"

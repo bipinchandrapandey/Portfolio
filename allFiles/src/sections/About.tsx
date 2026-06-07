@@ -13,14 +13,13 @@ const stats = [
 export default function About() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const { ref: parallaxRef, y: parallaxY } = useParallax(-0.18);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { y: parallaxY } = useParallax(-0.18, sectionRef);
 
   return (
     <section
       id="about"
-      ref={(el) => {
-        (parallaxRef as React.MutableRefObject<HTMLElement | null>).current = el;
-      }}
+      ref={sectionRef as React.LegacyRef<HTMLElement>}
       className="relative min-h-screen py-20 bg-[#080d1a] dark:bg-black overflow-hidden"
     >
       {/* Background effects — parallax layer */}
@@ -55,12 +54,7 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="flex justify-center items-center"
           >
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <InteractiveRobot />
-            </motion.div>
+            <InteractiveRobot />
           </motion.div>
 
           {/* Right - Content */}

@@ -60,19 +60,16 @@
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important;
   }
 
   html {
     scroll-behavior: smooth;
-    cursor: none;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
-    cursor: none;
   }
 }
 
